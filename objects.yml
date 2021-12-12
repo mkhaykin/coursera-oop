@@ -38,13 +38,13 @@ ally:
   remove:
     sprite: [NPC_1.png]
     action: remove_effect
-    min-count: 1
+    min-count: 0
     max-count: 3
   random:
     sprite: [NPC_3.png]
     action: apply_random
-    min-count: 3
-    max-count: 6
+    min-count: 0
+    max-count: 3
 enemies:
   rat:
     sprite: [rat.png]

@@ -30,9 +30,9 @@ def reload_game(engine, hero):
     engine.load_map(_map)
     engine.add_objects(generator['obj'].get_objects(_map))
 
-    # hero.position = [1, 1]
-    # размещаем случайным образом
-    hero.position = get_free_random_pos(engine.map, engine.objects)
+    hero.position = [1, 1]
+    # размещаем случайным образом: пока не вариант, карты заполняются _после_ установки героя ... Лавров.jpg
+    # hero.position = get_free_random_pos(engine.map, engine.objects)
     engine.add_hero(hero)
 
 
@@ -101,19 +101,19 @@ def add_gold(engine, hero):
 def get_free_random_pos(_map, _object):
     """ получить свободные координаты по карте и уже размещенным объектам"""
     lim_x, lim_y = len(_map[0]) - 2, len(_map) - 2
-    position = (random.randint(1, lim_x), random.randint(1, lim_y))
     # делаем список занятых позиций
     busy = []
-    for y in range(1, lim_y):
-        for x in range(1, lim_x):
+    for y in range(1, lim_y + 1):
+        for x in range(1, lim_x + 1):
             if _map[y][x] == wall:
                 busy.append((x, y))
 
-    busy.extend([obj.position for obj in _object if obj.position])
+    busy += [obj.position for obj in _object if obj.position]
 
     assert len(busy) == len(list(set(busy))), "совпадение объектов по координатам"
 
     count = 0
+    position = (random.randint(1, lim_x), random.randint(1, lim_y))
     while position in busy:
         position = (random.randint(1, lim_x), random.randint(1, lim_y))
         count += 1
@@ -219,7 +219,7 @@ class RandomMap(MapFactory):
             return self.objects
 
 
-class EmptyMap(RandomMap):
+class EmptyMap(MapFactory):
     yaml_tag = "!empty_map"
 
     class Map:
@@ -260,7 +260,7 @@ class EmptyMap(RandomMap):
             return self.objects
 
 
-class SpecialMap(RandomMap):
+class SpecialMap(MapFactory):
     yaml_tag = "!special_map"
 
     class Map:
@@ -269,8 +269,8 @@ class SpecialMap(RandomMap):
             size_x = len(MAP_SPECIAL[0])
             size_y = len(MAP_SPECIAL)
             self.Map = [[floor1 for _ in range(size_x)] for _ in range(size_y)]
-            for j in range(size_y):
-                for i in range(size_x):
+            for i in range(size_x):
+                for j in range(size_y):
                     if MAP_SPECIAL[j][i] == 'X':
                         self.Map[j][i] = wall
 
@@ -309,7 +309,6 @@ class SpecialMap(RandomMap):
                         coord = get_free_random_pos(_map, self.objects)
                         self.objects.append(Objects.Enemy(
                             prop['sprite'], prop, coord))
-
             return self.objects
 
 

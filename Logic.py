@@ -52,11 +52,13 @@ class GameEngine:
             Service.reload_game(self, self.hero)
         else:
             # TODO путь до картинок вынести в config
+            # нужен для масштабирования ...
             self.hero.sprite = Service.create_sprite(
                 os.path.join("texture", "Hero.png" if self.hero.is_alive() else 'hero_rip.png'), self._sprite_size)
             # TODO вызываем перезагрузку всех объектов, когда надо просто пересчитать спрайты и перерисовать
             #  бредятина.
             Service.service_init(self._sprite_size, False)
+
 
     def subscribe(self, obj):
         self.subscribers.add(obj)
@@ -77,7 +79,7 @@ class GameEngine:
         result = True
         # говнокод. каждый раз по всем объектам ...
         for obj in self.objects:
-            if obj.position == position:    # могут ли 2 врага быть на одной позиции. по коду могут...
+            if obj.position == position:    # могут ли 2 врага быть на одной позиции. по ходу могут...
                 obj.interact(self, self.hero)
                 if isinstance(obj, Ally):
                     self.delete_object(obj)

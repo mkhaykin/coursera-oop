@@ -7,8 +7,8 @@ ENEMY_TEXTURE = os.path.join("texture", "enemies")
 ALLY_TEXTURE = os.path.join("texture", "ally")
 
 
-RANDOM_MAP_SIZE_X = 15  # 41
-RANDOM_MAP_SIZE_Y = 11  # 41
+RANDOM_MAP_SIZE_X = 30  # 41
+RANDOM_MAP_SIZE_Y = 22  # 41
 
 
 HERO_BASE_STATS = {
@@ -23,6 +23,12 @@ KEYBOARD_CONTROL = True
 
 GAME_NAME = "MyRPG"
 START_SPRITE_SIZE = 40
+
+# важно, должен быть кратен области отображения,
+# иначе может прыгать при изменении
+SPRITE_STEP = 10
+SPRITE_MIN = 1
+SPRITE_MAX = 150
 
 
 # БЛОК КАРТ

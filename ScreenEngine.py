@@ -34,39 +34,39 @@ class ScreenHandle(pygame.Surface):
             self.successor.draw(canvas)
 
     def connect_engine(self, engine):
-        # FIXME connect_engine
         self.engine = engine   # мой код
         if self.successor is not None:
             self.successor.connect_engine(engine=engine)
 
 
 class GameSurface(ScreenHandle):
-
-    # def connect_engine(self, engine):
-    #     # FIXME save engine and send it to next in chain
-    #     self.engine = engine    # мой код
-    #     # TODO to next in chain
-    #     if self.successor:
-    #         self.successor.connect_engine(engine=engine)
+    """ игровое поле """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._min_x, self._min_y = 0, 0
 
     def _calc_min_xy(self):
         """ calculate (min_x,min_y) - left top corner """
-        # self.engine.map   - карта
-        # SCREEN_DIM[0]     - горизонталь
-        # SCREEN_DIM[1]     - вертикаль
-        # self.engine.sprite_size   - размер поля
-        # diff = (SCREEN_DIM[0] // 2 // self.engine.sprite_size,
-        #         SCREEN_DIM[1] // 2 // self.engine.sprite_size)
-        # min_x = self.engine.hero.position[0] - diff[0]  # 5
-        # min_y = self.engine.hero.position[1] - diff[1]  # 5
-        sprite_size = self.engine.sprite_size
-        size_x, size_y = len(self.engine.map[0]), len(self.engine.map)
-        min_x, min_y = 0,  0
-        if size_x * sprite_size <= SCREEN_DIM[0]:
-            min_x = 0
-        if size_y * sprite_size <= SCREEN_DIM[1]:
-            min_y = 0
-        return min_x, min_y  # self.engine.hero.position[0] - 5, self.engine.hero.position[1] - 5
+        def _calc(screen, field, hero):
+            if field > screen:
+                # герой должен оказаться в центральной позиции,
+                # если только это не создает пустышки по краям
+                value = hero - screen // 2
+                if value < 0:
+                    return 0
+                elif hero >= field - screen // 2:
+                    return field - screen
+                else:
+                    return value
+            else:
+                return 0
+        # размер экрана в спрайтах
+        screen_x, screen_y = map(lambda n: n // self.engine.sprite_size, self.get_size())
+        # размер поля
+        field_x, field_y = len(self.engine.map[0]), len(self.engine.map)
+        # позиция героя
+        hero_x, hero_y = self.engine.hero.position[0], self.engine.hero.position[1]
+        return _calc(screen_x, field_x, hero_x), _calc(screen_y, field_y, hero_y)
 
     def draw_map(self):
         size = self.engine.sprite_size

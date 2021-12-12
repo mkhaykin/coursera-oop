@@ -24,12 +24,18 @@ class GameEngine:
         self._sprite_size = START_SPRITE_SIZE
 
     def sprite_inc(self):
-        self._sprite_size += 1
-        self.create_game(self._sprite_size, False)
+        if self._sprite_size + SPRITE_STEP <= SPRITE_MAX:
+            self._sprite_size += SPRITE_STEP
+            self.create_game(self._sprite_size, False)
+        else:
+            self.notify('sorry ... max size')
 
     def sprite_dec(self):
-        self._sprite_size -= 1
-        self.create_game(self._sprite_size, False)
+        if self._sprite_size - SPRITE_STEP >= SPRITE_MIN:
+            self._sprite_size -= SPRITE_STEP
+            self.create_game(self._sprite_size, False)
+        else:
+            self.notify('sorry ... min size')
 
     @property
     def sprite_size(self):

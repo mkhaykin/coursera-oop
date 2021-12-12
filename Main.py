@@ -1,14 +1,10 @@
 import pygame
-import os
-import Objects
 import ScreenEngine as SE
 from Logic import GameEngine
-import Service
-import numpy as np
 
 from config import *
 
-
+# не рабочий код (остался с ТЗ)
 if not KEYBOARD_CONTROL:
     import numpy as np
     answer = np.zeros(4, dtype=float)
@@ -26,17 +22,13 @@ def process_key():
         if event.key in (pygame.K_KP_PLUS, pygame.K_PLUS, 61):
             # TODO это бы не в engine, а в driver
             engine.sprite_inc()
-            # size += 1
-            # create_game(size, False)
         if event.key in (pygame.K_KP_MINUS, pygame.K_MINUS):
             # TODO это бы не в engine, а в driver
             engine.sprite_dec()
-            # size -= 1
-            # create_game(size, False)
         if event.key == pygame.K_g:
             engine.god_mode()
         if event.key == pygame.K_r:
-            engine.create_game(sprite_size=None, is_new=True)
+            engine.create_game(is_new=True)
             iteration = 0
         if event.key == pygame.K_ESCAPE:
             engine.working = False

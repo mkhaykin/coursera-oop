@@ -215,9 +215,7 @@ class RandomMap(MapFactory):
 
 class EmptyMap(RandomMap):
     """ FIXME переделать на отдельную генерацию (сейчас копия рандома)"""
-    # yaml_tag = "!empty_map"
-
-    yaml_tag = "!special_map"
+    yaml_tag = "!empty_map"
 
     class Map:
 
@@ -237,9 +235,7 @@ class EmptyMap(RandomMap):
 
 class SpecialMap(RandomMap):
     """ FIXME переделать на отдельную генерацию (сейчас копия рандома)"""
-    # yaml_tag = "!special_map"
-
-    yaml_tag = "!empty_map"
+    yaml_tag = "!special_map"
 
     class Map:
 
@@ -257,7 +253,7 @@ class SpecialMap(RandomMap):
             return self.Map
 
 
-# глобальные ... фу так делать
+# TODO глобальные ... фу так делать
 wall = [0]
 floor1 = [0]
 floor2 = [0]

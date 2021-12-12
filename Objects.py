@@ -21,8 +21,6 @@ class Interactive(ABC):
 
 
 class AbstractObject(ABC):
-    """ моя реализация """
-    # TODO у меня криво
     @abstractmethod
     def __init__(self, icon, position):
         self.sprite = icon
@@ -31,7 +29,7 @@ class AbstractObject(ABC):
     def draw(self, display):
         pass
         # спорное решение: все рисование в sevice.py, а героя сюда запихнули (
-        # хз зачем
+        # хз зачем в общем pass
         # sprite_size = self.sprite.get_size()[0]
         # display.blit(self.sprite, [5 * sprite_size,
         #                            5 * sprite_size])

@@ -75,9 +75,9 @@ class GameEngine:
 
     def interact(self, position):
         result = True
-        # говнокод. каждый раз по всем объектам ... словарь для кого изобрели?
+        # говнокод. каждый раз по всем объектам ...
         for obj in self.objects:
-            if obj.position == position:    # могут ли 2 врага быть на одной позиции. по коду могут...?
+            if obj.position == position:    # могут ли 2 врага быть на одной позиции. по коду могут...
                 obj.interact(self, self.hero)
                 if isinstance(obj, Ally):
                     self.delete_object(obj)
@@ -130,8 +130,9 @@ class GameEngine:
         self.objects.extend(objects)
 
     def delete_object(self, obj):
-        # TODO проблема с выносом объектов иногда ...
         try:
             self.objects.remove(obj)
         except:
+            # FIXME проблема с выносом объектов иногда
+            #  не умеет уничтожать выход ...
             print(obj)

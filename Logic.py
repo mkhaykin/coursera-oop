@@ -1,7 +1,4 @@
-import os
-
 import Service
-import Logic
 from Objects import Ally, Enemy, Hero
 from config import *
 
@@ -20,7 +17,7 @@ class GameEngine:
     def __init__(self):
         # на самом деле спрайт надо загнать в ScreenEngine,
         # т.к. он отвечает за отрисовку.
-        # Подумать как передавать ему изменения спрайта.
+        # Подумать как передавать ему изменение размеров спрайта.
         self._sprite_size = START_SPRITE_SIZE
 
     def sprite_inc(self):

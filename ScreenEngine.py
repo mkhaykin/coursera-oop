@@ -3,15 +3,6 @@ import collections
 
 from config import *
 
-colors = {
-    "black": (0, 0, 0, 255),
-    "white": (255, 255, 255, 255),
-    "red": (255, 0, 0, 255),
-    "green": (0, 255, 0, 255),
-    "blue": (0, 0, 255, 255),
-    "wooden": (153, 92, 0, 255),
-}
-
 
 class ScreenHandle(pygame.Surface):
 
@@ -34,7 +25,7 @@ class ScreenHandle(pygame.Surface):
             self.successor.draw(canvas)
 
     def connect_engine(self, engine):
-        self.engine = engine   # мой код
+        self.engine = engine
         if self.successor is not None:
             self.successor.connect_engine(engine=engine)
 
@@ -93,7 +84,7 @@ class GameSurface(ScreenHandle):
             self.draw_object(obj.sprite[0], obj.position)
 
     def draw_hero(self):
-        pass
+        # вряд ли стоит разбивать перерисовку ...
         # self.engine.hero.draw(self)
         self.draw_object(self.engine.hero.sprite, self.engine.hero.position)
 
@@ -212,14 +203,12 @@ class HelpWindow(ScreenHandle):
         self.data.append(["Num+", "Zoom +"])
         self.data.append(["Num-", "Zoom -"])
         self.data.append([" R ", "Restart Game"])
-    # FIXME You can add some help information
 
     def draw(self, canvas):
         alpha = 0
         if self.engine.show_help:
             alpha = 128
         self.fill((0, 0, 0, alpha))
-        size = self.get_size()      #TODO drop?
         font1 = pygame.font.SysFont("courier", 24)
         font2 = pygame.font.SysFont("serif", 24)
         if self.engine.show_help:

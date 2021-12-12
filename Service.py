@@ -18,7 +18,10 @@ def create_sprite(img, sprite_size):
 
 # TODO В Logic
 def reload_game(engine, hero):
-    global level_list
+    # это в общем не релоад, а просто загрузка уровня для отображения
+    # стоит переписать
+    # TODO глобальная ... ппц (
+    global level_list, generator
     level_list_max = len(level_list) - 1
     engine.level += 1
     engine.objects = []
@@ -29,7 +32,7 @@ def reload_game(engine, hero):
 
     # hero.position = [1, 1]
     # размещаем случайным образом
-    hero.position = get_free_random_pos(_map, engine.objects)
+    hero.position = get_free_random_pos(engine.map, engine.objects)
     engine.add_hero(hero)
 
 
@@ -123,9 +126,12 @@ class MapFactory(yaml.YAMLObject):
 
     @classmethod
     def from_yaml(cls, loader, node):
-        _map = cls.Map()        # мой код
-        _obj = cls.Objects()    # мой код
-        return {'map': _map, 'obj': _obj}
+        _map = cls.Map()
+        _obj = cls.Objects()
+        _enemy = {}
+        for item in node.value:
+            _enemy[item[0].value] = int(item[1].value)
+        return {'map': _map, 'obj': _obj, 'enemy': _enemy}
 
     @classmethod
     def get_map(cls):
@@ -214,27 +220,47 @@ class RandomMap(MapFactory):
 
 
 class EmptyMap(RandomMap):
-    """ FIXME переделать на отдельную генерацию (сейчас копия рандома)"""
     yaml_tag = "!empty_map"
 
     class Map:
 
         def __init__(self):
-            size_x = len(MAP_SPECIAL[0])
-            size_y = len(MAP_SPECIAL)
+            size_x = len(MAP_EMPTY[0])
+            size_y = len(MAP_EMPTY)
             self.Map = [[floor1 for _ in range(size_x)] for _ in range(size_y)]
             for j in range(size_y):
                 for i in range(size_x):
-                    if MAP_SPECIAL[j][i] == 'X':
+                    if MAP_EMPTY[j][i] == 'X':
                         self.Map[j][i] = wall
 
         def get_map(self):
             return self.Map
 
+    class Objects:
+
+        def __init__(self):
+            self.objects = []
+
+        def get_objects(self, _map):
+
+            for obj_name in object_list_prob['objects']:
+                prop = object_list_prob['objects'][obj_name]
+                for i in range(random.randint(prop['min-count'], prop['max-count'])):
+                    coord = get_free_random_pos(_map, self.objects)
+                    self.objects.append(Objects.Ally(
+                        prop['sprite'], prop['action'], coord))
+
+            for obj_name in object_list_prob['ally']:
+                prop = object_list_prob['ally'][obj_name]
+                for i in range(random.randint(prop['min-count'], prop['max-count'])):
+                    coord = get_free_random_pos(_map, self.objects)
+                    self.objects.append(Objects.Ally(
+                        prop['sprite'], prop['action'], coord))
+
+            return self.objects
 
 
 class SpecialMap(RandomMap):
-    """ FIXME переделать на отдельную генерацию (сейчас копия рандома)"""
     yaml_tag = "!special_map"
 
     class Map:
@@ -243,7 +269,6 @@ class SpecialMap(RandomMap):
             size_x = len(MAP_SPECIAL[0])
             size_y = len(MAP_SPECIAL)
             self.Map = [[floor1 for _ in range(size_x)] for _ in range(size_y)]
-            # self.Map = list(map(list, self.Map))
             for j in range(size_y):
                 for i in range(size_x):
                     if MAP_SPECIAL[j][i] == 'X':
@@ -251,6 +276,41 @@ class SpecialMap(RandomMap):
 
         def get_map(self):
             return self.Map
+
+    class Objects:
+
+        def __init__(self):
+            self.objects = []
+
+        def get_objects(self, _map):
+            # TODO пришлось чтобы иметь доступ ограничениям монстров
+            global generator
+
+            for obj_name in object_list_prob['objects']:
+                prop = object_list_prob['objects'][obj_name]
+                for i in range(random.randint(prop['min-count'], prop['max-count'])):
+                    coord = get_free_random_pos(_map, self.objects)
+                    self.objects.append(Objects.Ally(
+                        prop['sprite'], prop['action'], coord))
+
+            for obj_name in object_list_prob['ally']:
+                prop = object_list_prob['ally'][obj_name]
+                for i in range(random.randint(prop['min-count'], prop['max-count'])):
+                    coord = get_free_random_pos(_map, self.objects)
+                    self.objects.append(Objects.Ally(
+                        prop['sprite'], prop['action'], coord))
+
+            # enemy только из списка map
+            enemy_list = generator['enemy']
+            for obj_name in object_list_prob['enemies']:
+                prop = object_list_prob['enemies'][obj_name]
+                if obj_name in enemy_list.keys():
+                    for _ in range(enemy_list[obj_name]):
+                        coord = get_free_random_pos(_map, self.objects)
+                        self.objects.append(Objects.Enemy(
+                            prop['sprite'], prop, coord))
+
+            return self.objects
 
 
 # TODO глобальные ... фу так делать
@@ -313,7 +373,10 @@ def service_init(sprite_size, full=True):
     file.close()
 
     if full:
+        # загружаем уровни
+        # TODO переделать на with
         file = open("levels.yml", "r")
         level_list = yaml.load(file.read(), yaml.FullLoader)['levels']
-        level_list.append({'map': EndMap.Map(), 'obj': EndMap.Objects()})
+        # добавляем финальный
+        level_list.append({'map': EndMap.Map(), 'obj': EndMap.Objects(), 'enemy': dict()})
         file.close()

@@ -22,7 +22,7 @@ HERO_BASE_STATS = {
 KEYBOARD_CONTROL = True
 
 GAME_NAME = "MyRPG"
-START_SPRITE_SIZE = 40
+START_SPRITE_SIZE = 30
 
 # важно, должен быть кратен области отображения,
 # иначе может прыгать при изменении

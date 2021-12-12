@@ -1,12 +1,10 @@
 import pygame
 import random
 import yaml
-import os
-import Objects
-
 from abc import ABC
 
 from config import *
+import Objects
 
 
 # TODO  ScreenEngine
@@ -29,9 +27,9 @@ def reload_game(engine, hero):
     engine.load_map(_map)
     engine.add_objects(generator['obj'].get_objects(_map))
 
-    hero.position = [1, 1]
+    # hero.position = [1, 1]
     # размещаем случайным образом
-    # hero.position = get_free_random_pos(_map, engine.objects)
+    hero.position = get_free_random_pos(_map, engine.objects)
     engine.add_hero(hero)
 
 
@@ -217,7 +215,9 @@ class RandomMap(MapFactory):
 
 class EmptyMap(RandomMap):
     """ FIXME переделать на отдельную генерацию (сейчас копия рандома)"""
-    yaml_tag = "!empty_map"
+    # yaml_tag = "!empty_map"
+
+    yaml_tag = "!special_map"
 
     class Map:
 
@@ -237,7 +237,9 @@ class EmptyMap(RandomMap):
 
 class SpecialMap(RandomMap):
     """ FIXME переделать на отдельную генерацию (сейчас копия рандома)"""
-    yaml_tag = "!special_map"
+    # yaml_tag = "!special_map"
+
+    yaml_tag = "!empty_map"
 
     class Map:
 

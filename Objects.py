@@ -78,11 +78,18 @@ class Enemy(Creature, Interactive):
         super().__init__(icon, stats, coord)
 
     def interact(self, engine, hero):
-        # TODO битва с героем
-        self.hp -= hero.stats["strength"]
+        damage = hero.stats["strength"]
+        if random.randint(1, 100) < hero.stats["luck"]:
+            damage *= 2
+            engine.notify(f'you lucky: damage x2')
+        self.hp -= damage
+        engine.notify(f'the enemy takes {damage} damage')
+
         if self.hp > 0:
             if not hero.god_mode:
-                hero.hp -= self.stats["strength"]
+                damage = self.stats["strength"]
+                hero.hp -= damage
+                engine.notify(f'you takes {damage} damage')
             if not hero.is_alive():
                 hero.hp = 0
                 sprite_size = engine.sprite_size
@@ -90,6 +97,7 @@ class Enemy(Creature, Interactive):
                 engine.notify("Ooops ... you die. :(")
         else:
             hero.exp += self.stats["experience"]
+            engine.notify("You killed him!")
             # TODO плохо так делать: глобально нужен другой способ передачи сообщений
             hero.level_up(engine=engine)
 

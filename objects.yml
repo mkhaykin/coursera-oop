@@ -74,3 +74,10 @@ enemies:
     intelligence: 50
     luck: 5
     experience: 1000
+  monster:
+    sprite: [monster.png]
+    strength: 100
+    endurance: 35
+    intelligence: 1
+    luck: 1
+    experience: 1000

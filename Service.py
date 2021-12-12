@@ -178,7 +178,6 @@ class RandomMap(MapFactory):
                     if i == 0 or j == 0 or i == RANDOM_MAP_SIZE_X - 1 or j == RANDOM_MAP_SIZE_Y - 1:
                         self.Map[j][i] = wall
                     else:
-                        # TODO что-то не то, подумать ...
                         self.Map[j][i] = [wall, floor1, floor2, floor3, floor1,
                                           floor2, floor3, floor1, floor2][random.randint(0, 8)]
 
@@ -208,7 +207,7 @@ class RandomMap(MapFactory):
 
             for obj_name in object_list_prob['enemies']:
                 prop = object_list_prob['enemies'][obj_name]
-                for i in range(random.randint(0, 5)):
+                for i in range(random.randint(1, 5)):
                     coord = get_free_random_pos(_map, self.objects)
                     self.objects.append(Objects.Enemy(
                         prop['sprite'], prop, coord))
@@ -220,11 +219,41 @@ class EmptyMap(RandomMap):
     """ FIXME переделать на отдельную генерацию (сейчас копия рандома)"""
     yaml_tag = "!empty_map"
 
+    class Map:
+
+        def __init__(self):
+            size_x = len(MAP_SPECIAL[0])
+            size_y = len(MAP_SPECIAL)
+            self.Map = [[floor1 for _ in range(size_x)] for _ in range(size_y)]
+            for j in range(size_y):
+                for i in range(size_x):
+                    if MAP_SPECIAL[j][i] == 'X':
+                        self.Map[j][i] = wall
+
+        def get_map(self):
+            return self.Map
+
 
 
 class SpecialMap(RandomMap):
     """ FIXME переделать на отдельную генерацию (сейчас копия рандома)"""
     yaml_tag = "!special_map"
+
+    class Map:
+
+        def __init__(self):
+            size_x = len(MAP_SPECIAL[0])
+            size_y = len(MAP_SPECIAL)
+            self.Map = [[floor1 for _ in range(size_x)] for _ in range(size_y)]
+            # self.Map = list(map(list, self.Map))
+            for j in range(size_y):
+                for i in range(size_x):
+                    if MAP_SPECIAL[j][i] == 'X':
+                        self.Map[j][i] = wall
+
+        def get_map(self):
+            return self.Map
+
 
 # глобальные ... фу так делать
 wall = [0]

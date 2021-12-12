@@ -59,6 +59,7 @@ def process_key():
 
 
 def bullshit():
+    """ кусок не исполняемого кода ... """
     global hero, engine, drawer, iteration
     # остатки говнокода проекта
     for event in pygame.event.get():

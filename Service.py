@@ -6,6 +6,9 @@ from abc import ABC
 from config import *
 import Objects
 
+# кривой код для учета позиции героя при генерации карты
+hero_pos = (-1, -1)
+
 
 # TODO  ScreenEngine
 def create_sprite(img, sprite_size):
@@ -21,7 +24,8 @@ def reload_game(engine, hero):
     # это в общем не релоад, а просто загрузка уровня для отображения
     # стоит переписать
     # TODO глобальная ... ппц (
-    global level_list, generator
+    global level_list, generator, hero_pos
+
     level_list_max = len(level_list) - 1
     engine.level += 1
     engine.objects = []
@@ -30,10 +34,13 @@ def reload_game(engine, hero):
     engine.load_map(_map)
     engine.add_objects(generator['obj'].get_objects(_map))
 
-    hero.position = [1, 1]
+    hero_pos = engine.hero.position
+    # этот код не требуется
+    # engine.hero.position = (1, 1)
+
     # размещаем случайным образом: пока не вариант, карты заполняются _после_ установки героя ... Лавров.jpg
     # hero.position = get_free_random_pos(engine.map, engine.objects)
-    engine.add_hero(hero)
+    # engine.add_hero(hero)
 
 
 # TODO по хорошему все обработчики эффектов в объекты. Ну или в logic
@@ -97,8 +104,10 @@ def add_gold(engine, hero):
         engine.notify(f"{gold} gold added")
 
 
-# TODO в карты
+# TODO в карты. Переделать: надо держать список свободных и просто из него убирать по заполнению,
+#  так будет быстрее.
 def get_free_random_pos(_map, _object):
+    global hero_pos
     """ получить свободные координаты по карте и уже размещенным объектам"""
     lim_x, lim_y = len(_map[0]) - 2, len(_map) - 2
     # делаем список занятых позиций
@@ -112,6 +121,7 @@ def get_free_random_pos(_map, _object):
 
     assert len(busy) == len(list(set(busy))), "совпадение объектов по координатам"
 
+    busy += [hero_pos]
     count = 0
     position = (random.randint(1, lim_x), random.randint(1, lim_y))
     while position in busy:

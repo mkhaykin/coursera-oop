@@ -1,7 +1,7 @@
 import pygame
+
 import ScreenEngine as SE
 from Logic import GameEngine
-
 from config import *
 
 # не рабочий код (остался с ТЗ)

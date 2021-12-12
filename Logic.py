@@ -104,9 +104,17 @@ class GameEngine:
             new_position = (self.hero.position[0] + diff[0], self.hero.position[1] + diff[1])
             if self.map[new_position[1]][new_position[0]] == Service.wall:
                 return
-
+            # говнокод: не отловить переход на новый уровень, ловим сменой уровня
+            old_level = self.level
             if self.interact(new_position) and self.hero.is_alive():
-                self.hero.position = new_position
+                if old_level != self.level:
+                    # герой уже на новом уровне
+                    pass
+                else:
+                    self.hero.position = new_position
+
+                global hero_pos
+                hero_pos = self.hero.position
 
     def move_up(self):
         self.move((0, -1))
@@ -135,6 +143,6 @@ class GameEngine:
         try:
             self.objects.remove(obj)
         except:
-            # FIXME проблема с выносом объектов иногда
+            # FIXME проблема с выносом объектов:
             #  не умеет уничтожать выход ...
-            print(obj)
+            pass

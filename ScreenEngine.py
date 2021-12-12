@@ -86,6 +86,11 @@ class GameSurface(ScreenHandle):
     def draw_hero(self):
         # вряд ли стоит разбивать перерисовку ...
         # self.engine.hero.draw(self)
+        # TODO подтяжки (
+        if self.engine.hero.position[0] >= len(self.engine.map[0]) or \
+                self.engine.hero.position[1] >= len(self.engine.map):
+            self.engine.hero.position = (1, 1)
+
         self.draw_object(self.engine.hero.sprite, self.engine.hero.position)
 
     def draw(self, canvas):
